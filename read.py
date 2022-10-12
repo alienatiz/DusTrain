@@ -16,6 +16,8 @@ print('data.isnull().sum(): \n', raw_data.isnull().sum())
 print('raw_data.isna().sum(): \n', raw_data.isna().sum())
 raw_data = raw_data.replace('보수중', np.NAN)
 raw_data = raw_data.replace('기기점검', np.NAN)
+raw_data.replace('측정자료확인중(가동중지)', np.NAN, inplace=True)
+raw_data.replace('측정자료확인중', np.NAN, inplace=True)
 print(raw_data, '\n')
 
 # 3. Pre-process the null values
@@ -25,7 +27,7 @@ pre_data = pre_data.rename(columns={'측정시간': 'measure_dt', '지역명': '
                                     '배출구': 'stack', '질소산화물_측정값': 'NOx', '황산화물_측정값': 'SOx',
                                     '먼지_측정값': 'DUST', '염화수소_측정값': 'HCl', '일산화탄소_측정값': 'CO'})
 print('columns of pre_data: ', pre_data.columns)
-pre_data.to_csv(pre_path + 'pre_data.csv')
+pre_data.to_csv(pre_path + 'pre_data.csv', index=False)
 pre_data_loaded = pd.read_csv(pre_path + 'pre_data.csv')
 
 # 4. Re-check the null values
