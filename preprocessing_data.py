@@ -35,11 +35,11 @@ print("check the data_1:\n", data_1.head(10))
 # Change the text to strftime
 date_format = '%Y-%m-%d %H:%M:%S'
 for i in range(len(data_0['mesure_dt'].values)):
-    str_dt = str(data_0['mesure_dt'][i])[:-2]
+    str_dt = str(data_0['mesure_dt'][i])[:-5]
     repl_list.append(str_dt)
 
 for j in range(len(data_1['mesure_dt'].values)):
-    str_dt_1 = str(data_1['mesure_dt'][j])[:-2]
+    str_dt_1 = str(data_1['mesure_dt'][j])[:-5]
     repl_list_1.append(str_dt_1)
 
 print(repl_list)
