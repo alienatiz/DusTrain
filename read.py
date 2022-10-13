@@ -14,10 +14,7 @@ print(raw_data, '\n')
 # print(data.dtypes, '\n', data_g.dtypes)
 print('data.isnull().sum(): \n', raw_data.isnull().sum())
 print('raw_data.isna().sum(): \n', raw_data.isna().sum())
-raw_data = raw_data.replace('보수중', np.NAN)
-raw_data = raw_data.replace('기기점검', np.NAN)
-raw_data.replace('측정자료확인중(가동중지)', np.NAN, inplace=True)
-raw_data.replace('측정자료확인중', np.NAN, inplace=True)
+raw_data.replace(['보수중', '기기점검', '측정자료확인중(가동중지)', '측정자료확인중'], np.NAN, inplace=True)
 print(raw_data, '\n')
 
 # 3. Pre-process the null values
