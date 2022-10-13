@@ -3,7 +3,6 @@
 
 import pandas as pd
 import numpy as np
-import datetime as dt
 
 # 1. Set the path for other .csv files
 other_data_path = r'C:/Users/KBC/PycharmProjects/chemical/other_data/'
@@ -11,9 +10,6 @@ orig_data_path = r'C:/Users/KBC/PycharmProjects/chemical/outputs/'
 repl_list, repl_list_1 = [], []
 
 # 2. Pre-Processing
-# for i in range(0, 2):
-#     globals()['data_{}'.format(i)] = i
-
 data_0 = pd.read_excel(other_data_path + '2022-08-10_2022-08-19_굴뚝 데이터.xlsx')
 data_1 = pd.read_excel(other_data_path + '2022-08-19_2022-08-23_굴뚝 데이터.xlsx')
 data_lab = pd.read_excel(orig_data_path + 'lab_data.xlsx')
@@ -36,24 +32,22 @@ print("check the data_1:\n", data_1.head(10))
 # Change the text to strftime
 date_format = '%Y-%m-%d %H:%M:%S'
 for i in range(len(data_0['mesure_dt'].values)):
-    str_dt = str(data_0['mesure_dt'][i])[:-5]
+    str_dt = str(data_0['mesure_dt'][i])[:-2]
     repl_list.append(str_dt)
 
 for j in range(len(data_1['mesure_dt'].values)):
-    str_dt_1 = str(data_1['mesure_dt'][j])[:-5]
+    str_dt_1 = str(data_1['mesure_dt'][j])[:-2]
     repl_list_1.append(str_dt_1)
 
 # print(repl_list)
 data_0['mesure_dt_1'] = repl_list
 data_1['mesure_dt_1'] = repl_list_1
-# print(data_0.head(5))
 
 # Drop the column (i.e., mesure_dt)
 data_0 = data_0.drop(['mesure_dt'], axis=1)
 data_1 = data_1.drop(['mesure_dt'], axis=1)
 data_0 = data_0.rename(columns={'mesure_dt_1': 'mesure_dt'})
 data_1 = data_1.rename(columns={'mesure_dt_1': 'mesure_dt'})
-print("check the data: \n", data_0.head(10))
 
 # Reindex the columns
 data_0 = data_0.reindex(
