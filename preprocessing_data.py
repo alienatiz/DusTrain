@@ -66,8 +66,16 @@ data_1 = data_1.reindex(
      'nox_exhst_perm_stdr_value', 'nox_mesure_value', 'sox_exhst_perm_stdr_value', 'sox_mesure_value',
      'tsp_exhst_perm_stdr_value', 'tsp_mesure_value', 'hf_exhst_perm_stdr_value', 'hf_mesure_value',
      'hcl_exhst_perm_stdr_value', 'hcl_mesure_value', 'co_exhst_perm_stdr_value', 'co_mesure_value'], axis=1)
-print("check the data: \n", data_0.head(10))
+
+# print("check the data: \n", data_0.head(10))
+
+# Extract the certain rows as same as original data
+stack_list = [1, 123, 132, 15, 153, 154, 155, 156, 16, 17, 18, 2, 20, 24, 25,
+              26, 27, 28, 29, 3, 30, 31, 32, 45, 47, 49, 51, 52, 53, 54, 92, 93]
+print(data_0[(data_0['stack_code'].isin(stack_list))])
+data_0_repl = data_0[(data_0['stack_code'].isin(stack_list))]
+data_1_repl = data_1[(data_1['stack_code'].isin(stack_list))]
 
 # Save the data to .csv
-data_0.to_csv(other_data_path + 'data_0.csv', sep=',', na_rep='NaN', index=False, encoding='UTF-8')
-data_1.to_csv(other_data_path + 'data_1.csv', sep=',', na_rep='NaN', index=False, encoding='UTF-8')
+data_0_repl.to_csv(other_data_path + 'data_0.csv', sep=',', na_rep='NaN', index=False, encoding='UTF-8')
+data_1_repl.to_csv(other_data_path + 'data_1.csv', sep=',', na_rep='NaN', index=False, encoding='UTF-8')
