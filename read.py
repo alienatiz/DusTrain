@@ -3,8 +3,8 @@ import os
 import numpy as np
 import pandas as pd
 
-input_path = r'C:/Users/KBC/PycharmProjects/chemical/outputs/'
-pre_path = r'C:/Users/KBC/PycharmProjects/chemical/outputs/'
+input_path = r'C:/Users/KBC/PycharmProjects/chemical/pre_data/'
+pre_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets/'
 
 # 1. Read data from csv
 raw_data = pd.read_csv(input_path + 'data_c.csv')
