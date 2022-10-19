@@ -7,6 +7,7 @@ from matplotlib import font_manager, rc
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVR
 
 plt.rcParams['axes.unicode_minus'] = False
@@ -74,8 +75,15 @@ print("\n*** Build SupportVectorRegressor model ***")
 print(f'Checked sklearn version: {sklearn.__version__}')
 SV = SVR()
 SV.fit(X_train, y_train.values.ravel())
-print('결정 계수 R:', SV.score(X_train, y_train))
+print('결정 계수 R:', SV.score(X_train, y_train.values.ravel()))
 # 결정 계수 R: 0.00657197919417607
-y_pred = SV.predict(X_train)
-print(y_pred)
+SV_pred = SV.predict(X_train)
+print(SV_pred)
 # [0.16443919 0.15018678 0.10979136 ... 0.124581   0.12575119 0.16421619]
+
+# Build ANN model
+# ANN = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5,2), random_state=1)
+# ANN.fit(X_train, y_train.values.ravel())
+# ANN_pred = ANN.predict(X_train)
+# print('ANN_pred: ', ANN_pred)
+# print('ANN.coefs_: ', ANN.coefs_)
