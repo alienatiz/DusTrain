@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVR
 
+# 0. Settings (supported OS)
 plt.rcParams['axes.unicode_minus'] = False
 
 if platform.system() == 'Darwin':
@@ -21,7 +22,7 @@ elif platform.system() == 'Windows':
 else:
     print('Unknown System... ')
 
-# 1. Load data
+# 1. Load and fix datasets
 datasets_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets/'
 data_fix = pd.read_csv(datasets_path + 'data_r2.csv')
 data_fix.drop(['mesure_dt', 'area_nm', 'fact_manage_nm', 'stack_code'], axis=1, inplace=True)
@@ -29,13 +30,14 @@ data_fix.to_csv(datasets_path + 'data_r2_fix.csv', sep=',', index=False, encodin
 data_raw = pd.read_csv(datasets_path + 'data_r2_fix.csv')
 print(data_raw.shape, data_raw.dtypes)
 
-# 2. Split the data to train, test
+# 2. Split the data to train, test from datasets (data_raw)
 X = data_raw.iloc[:, 0:3]
 y = data_raw.iloc[:, 4:]
 
 features = ['NOx', 'SOx', 'DUST', 'HCl', 'CO']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
+# 3. Build the several machine learning models
 # Build LR model
 print("\n*** Build LinearRegression model ***")
 print(f'Checked sklearn version: {sklearn.__version__}')
