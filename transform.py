@@ -1,8 +1,8 @@
 import pandas as pd
 
 
-data_path = r'C:\\Users\KBC\PycharmProjects\chemical\datasets'
-datasets = pd.read_csv('C:\\Users\KBC\PycharmProjects\chemical\datasets\data_r2_fix.csv')
+data_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets'
+datasets = pd.read_csv(r'C:/Users/KBC/PycharmProjects/chemical/datasets/data_r2_fix.csv')
 print(datasets.head(5))
 
 fixed_datasets = datasets.transpose()
