@@ -24,18 +24,25 @@ else:
 
 # 1. Load and fix datasets
 datasets_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets/'
-data_fix = pd.read_csv(datasets_path + 'data_r2.csv')
-data_fix.drop(['mesure_dt', 'area_nm', 'fact_manage_nm', 'stack_code'], axis=1, inplace=True)
-data_fix.to_csv(datasets_path + 'data_r2_fix.csv', sep=',', index=False, encoding='UTF-8-sig')
+target_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets/target/'
+# data_fix = pd.read_csv(datasets_path + 'data_r2.csv')
+# data_fix.drop(['mesure_dt', 'area_nm', 'fact_manage_nm', 'stack_code'], axis=1, inplace=True)
+# data_fix.to_csv(datasets_path + 'data_r2_fix.csv', sep=',', index=False, encoding='UTF-8-sig')
 data_raw = pd.read_csv(datasets_path + 'data_r2_fix.csv')
 print(data_raw.shape, data_raw.dtypes)
 
-# 2. Split the data to train, test from datasets (data_raw)
-X = data_raw.iloc[:, 0:3]
-y = data_raw.iloc[:, 4:]
+# 2. Split the data to train, test from datasets
+# Description: The data collected from August to October is set to train dataset,
+#              and the data collected from the certain week of October is set to validation dataset.
+X = data_raw.iloc[:, :4]
+y = data_raw.iloc[:, 4:5]
 
 features = ['NOx', 'SOx', 'DUST', 'HCl', 'CO']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+print("X_train: ", X_train)
+print("X_test: ", X_test)
+print("y_train: ", y_train)
+print("y_test: ", y_test)
 
 # 3. Build the several machine learning models
 # Build LR model
