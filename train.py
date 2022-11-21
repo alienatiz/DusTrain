@@ -3,12 +3,16 @@ import platform
 import matplotlib.pyplot as plt
 import pandas as pd
 import sklearn
+import seaborn as sns
 from matplotlib import font_manager, rc
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR
+from keras.models import Sequential
+from keras.layers import Dense, LSTM, SimpleRNN
+from keras.utils import np_utils
 
 # 0. Settings (supported OS)
 plt.rcParams['axes.unicode_minus'] = False
@@ -25,24 +29,38 @@ else:
 # 1. Load and fix datasets
 datasets_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets/'
 target_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets/target/'
-# data_fix = pd.read_csv(datasets_path + 'data_r2.csv')
-# data_fix.drop(['mesure_dt', 'area_nm', 'fact_manage_nm', 'stack_code'], axis=1, inplace=True)
-# data_fix.to_csv(datasets_path + 'data_r2_fix.csv', sep=',', index=False, encoding='UTF-8-sig')
-data_raw = pd.read_csv(datasets_path + 'data_r2_fix.csv')
-print(data_raw.shape, data_raw.dtypes)
+# data_fix = pd.read_csv(datasets_path + 'data_nov_w1_pp.csv')
+# data_fix.drop(['area_nm', 'fact_manage_nm', 'stack_code'], axis=1, inplace=True)
+# data_fix.to_csv(datasets_path + 'data_nov_07-11.csv', sep=',', index=False, encoding='UTF-8-sig')
+# print(data_fix.shape, data_fix.dtypes)
+
+data_raw = pd.read_csv(datasets_path + 'datasets_08_30.csv')
+data_target = pd.read_csv(datasets_path + 'datasets_09.csv')
+
+data_raw.dropna(inplace=True)
+data_target.dropna(inplace=True)
+
+print(data_raw.shape)
+print(data_target.shape)
+
+corr = data_raw.corr(method='pearson', numeric_only=True)
+print('corr:\n', corr)
 
 # 2. Split the data to train, test from datasets
 # Description: The data collected from August to October is set to train dataset,
 #              and the data collected from the certain week of October is set to validation dataset.
-X = data_raw.iloc[:, :4]
-y = data_raw.iloc[:, 4:5]
+# x_label = float(data_raw['mesure_dt'])
+X = data_raw[['NOx', 'SOx']]
+y = data_target[['NOx', 'SOx']]
+print(X.shape)
+print(y.shape)
 
-features = ['NOx', 'SOx', 'DUST', 'HCl', 'CO']
+features = ['NOx', 'SOx']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-print("X_train: ", X_train)
-print("X_test: ", X_test)
-print("y_train: ", y_train)
-print("y_test: ", y_test)
+print(X_train.shape)
+print(X_test.shape)
+print(y_train.shape)
+print(y_test.shape)
 
 # 3. Build the several machine learning models
 # Build LR model
@@ -53,7 +71,18 @@ LR.fit(X_train, y_train)
 print('기울기 a:', LR.coef_)
 print('y절편 b:', LR.intercept_)
 relation_square = LR.score(X_train, y_train)
-print('결정 계수 r', relation_square)
+print('결정 계수 r2: {:.2f}'.format(relation_square))
+
+sns.set_theme(color_codes=True)
+sns.lmplot(x='NOx', y='DUST', data=data_raw,
+           markers='o',
+           line_kws={'color':'red', 'linestyle':'--'},
+           scatter_kws={'s':5, 'color':'blue', 'alpha': 0.7})
+
+sns.lmplot(x='SOx', y='DUST', data=data_raw,
+           markers='o',
+           line_kws={'color':'red', 'linestyle':'--'},
+           scatter_kws={'s':5, 'color':'blue', 'alpha': 0.7})
 
 # 기울기 a: [[-0.00225756  0.02130299 -0.05156007 -0.00456313]]
 # y절편 b: [0.27532916]
@@ -63,9 +92,27 @@ print('결정 계수 r', relation_square)
 print("\n*** Build RandomForestRegressor model ***")
 print(f'Checked sklearn version: {sklearn.__version__}')
 RFR = RandomForestRegressor(n_estimators=500, n_jobs=8, oob_score=True, random_state=0)
-RFR.fit(X_train, y_train.values.ravel())
+RFR.fit(X_train, y_train)
 importance = RFR.feature_importances_
-print(importance)
+
+feature = X_train.columns
+importances = pd.DataFrame()
+importances['feature'] = feature
+importances['importances'] = importance
+importances.sort_values('importances', ascending=False, inplace=True)
+importances.reset_index(drop=True, inplace=True)
+print(importances)
+
+print(importances)
+plt.figure(figsize=(10,8))
+sns.barplot(x='importances', y='feature', data=importances)
+plt.title('Feature importance of the input variables on Random Forest', fontsize=18)
+plt.show()
+
+print('oob_prediction_:\n', RFR.oob_prediction_)
+print('oob_score_:\n', RFR.oob_score_)
+relation_square = RFR.score(X_train, y_train)
+print('결정 계수 r:\n', relation_square)
 
 # NOX: 0.31325047
 # SOX: 0.28792656
@@ -89,6 +136,20 @@ print('결정 계수 R:', SV.score(X_train, y_train.values.ravel()))
 SV_pred = SV.predict(X_train)
 print(SV_pred)
 # [0.16443919 0.15018678 0.10979136 ... 0.124581   0.12575119 0.16421619]
+
+# Build RNN model
+RNN = Sequential()
+RNN.add(LSTM(340, activation='relu', input_dim=3, input_shape=()))
+RNN.add(Dense(1))
+RNN.compile(optimizer='adam', loss='mse')
+hist = RNN.fit(X_train, y_train, epochs=500, batch_size=10, verbose=1)
+
+plt.plot(hist.history['loss'])
+plt.ylim(0.0, 100.0)
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['DUST'], loc='upper right')
+plt.show()
 
 # Build ANN model
 ANN = MLPRegressor(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5,2), random_state=1)
