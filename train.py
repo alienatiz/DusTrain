@@ -34,12 +34,21 @@ target_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets/target/'
 # data_fix.to_csv(datasets_path + 'data_nov_07-11.csv', sep=',', index=False, encoding='UTF-8-sig')
 # print(data_fix.shape, data_fix.dtypes)
 
-data_raw = pd.read_csv(datasets_path + 'datasets_08_30.csv')
+data_raw = pd.read_csv(datasets_path + 'datasets_08_10.csv')
 data_target = pd.read_csv(datasets_path + 'datasets_09.csv')
 
 data_raw.dropna(inplace=True)
 data_target.dropna(inplace=True)
 
+
+def transform_datetype(data_raw):
+    data_raw['mesure_dt'] = data_raw['mesure_dt'].astype('str')
+    data_raw['mesure_dt'] = pd.to_datetime(data_raw['mesure_dt'])
+    # data_raw['mesure_dt'] = data_raw['mesure_dt'].values.astype('float64')
+    return data_raw
+
+
+data_raw = transform_datetype(data_raw)
 print(data_raw.shape)
 print(data_target.shape)
 
@@ -49,14 +58,17 @@ print('corr:\n', corr)
 # 2. Split the data to train, test from datasets
 # Description: The data collected from August to October is set to train dataset,
 #              and the data collected from the certain week of October is set to validation dataset.
-# x_label = float(data_raw['mesure_dt'])
-X = data_raw[['NOx', 'SOx']]
-y = data_target[['NOx', 'SOx']]
-print(X.shape)
-print(y.shape)
-
 features = ['NOx', 'SOx']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+print(data_raw)
+data_raw_train = data_raw.loc[1:3145, :]
+data_raw_test = data_raw.loc[3146:3568, :]
+print(data_raw_train, data_raw_test)
+print(data_raw_train.shape, data_raw_test.shape)
+
+X_train = data_raw_train[['NOx', 'SOx']]
+X_test = data_raw_test[['mesure_dt']]
+y_train = data_raw_train[['NOx', 'SOx']]
+y_test = data_raw_test[['mesure_dt']]
 print(X_train.shape)
 print(X_test.shape)
 print(y_train.shape)
