@@ -31,8 +31,7 @@ else:
     print('Unknown System... ')
 
 # 1. Load and fix datasets
-datasets_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets/'
-target_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets/target/'
+datasets_path = r'D:/tms/datasets/'
 # data_fix = pd.read_csv(datasets_path + 'data_nov_w1_pp.csv')
 # data_fix.drop(['area_nm', 'fact_manage_nm', 'stack_code'], axis=1, inplace=True)
 # data_fix.to_csv(datasets_path + 'data_nov_07-11.csv', sep=',', index=False, encoding='UTF-8-sig')
@@ -41,33 +40,35 @@ target_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets/target/'
 data_raw = pd.read_csv(datasets_path + 'datasets_08_10.csv')
 data_target = pd.read_csv(datasets_path + 'datasets_09.csv')
 data_fix = pd.read_csv(datasets_path + 'datasets_0801-1017.csv')
-print(data_fix.head())
-
-data_raw.dropna(inplace=True)
-data_target.dropna(inplace=True)
+data_rnd = pd.read_csv(datasets_path + 'datasets_0801-1017.csv')
+print(data_rnd.head())
 
 
-def transform_datetype(data_raw):
-    data_raw['mesure_dt'] = data_raw['mesure_dt'].astype('str')
-    data_raw['mesure_dt'] = pd.to_datetime(data_raw['mesure_dt'])
-    data_raw.set_index(data_raw['mesure_dt'], inplace=True)
-    data_raw.drop(['mesure_dt'], axis=1, inplace=True)
-    data_raw.sort_values(by=['mesure_dt'])
-    data_raw.dropna()
-    return data_raw
+def transform_datetype(df):
+    df['mesure_dt'] = df['mesure_dt'].astype('str')
+    df['mesure_dt'] = pd.to_datetime(df['mesure_dt'])
+    df.set_index(df['mesure_dt'], inplace=True)
+    df.drop(['mesure_dt'], axis=1, inplace=True)
+    df.sort_values(by=['mesure_dt'])
+    df.dropna()
+    return df
 
 
-def dt2float(data_raw):
-    data_raw['mesure_dt'] = data_raw.index.astype('float[D]').tolist()
-    return data_raw
-
+def dt2float(df):
+    df['mesure_dt'] = df['mesure_dt'].str.replace(':', '')
+    df['mesure_dt'] = df['mesure_dt'].str.replace(' ', '')
+    df['mesure_dt'] = df['mesure_dt'].str.replace('-', '')
+    print('Convert df.head(5):\n', df.head(5))
+    df['mesure_dt'].values.astype('float')
+    return df
 
 data_raw = transform_datetype(data_raw)
 data_fix = transform_datetype(data_fix)
-data_rnd = data_fix
+dt2float(data_rnd)
 print('data_raw.shape:\n', data_raw.shape)
 print('data_target.shape:\n', data_target.shape)
 print('data_fix.shape:\n', data_fix.shape)
+print('data_rnd.shape:\n', data_rnd.shape)
 
 # 2. Split the data to train, test from datasets
 # Description: The data collected from August to October is set to train dataset,
@@ -97,7 +98,7 @@ print('\nCheck the size of datasets_rnd:',
       '\ny_test_ts: ', y_test_ts.shape)
 
 # 2-2. Random
-corr = data_rnd.corr(method='pearson', numeric_only=True)
+corr = data_rnd.corr(method='pearson')
 print('corr:\n', corr)
 
 print(data_rnd.index.dtype)
