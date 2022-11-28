@@ -10,12 +10,14 @@ from matplotlib import rc
 import matplotlib.font_manager as fm
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score, confusion_matrix, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, SimpleRNN
 from keras.utils import np_utils
+from sklearn.tree import DecisionTreeRegressor
 
 # 0. Settings (supported OS)
 plt.rcParams['axes.unicode_minus'] = False
@@ -80,16 +82,18 @@ print('data_rnd.shape:\n', data_rnd.shape)
 
 features = ['NOx', 'SOx', 'HCl', 'CO']
 print('\nSplit the datasets based on Time-series')
-X_tr_ts = data_fix.iloc[1:2740, 0:2]
-X_te_ts = data_fix.iloc[2741:3140, 0:2]
+X_all = data_fix.iloc[:, 0:2]
+X_tr_ts = data_fix.iloc[:2740, 1:2]
+X_te_ts = data_fix.iloc[2741:3140, 1:2]
 print(X_te_ts)
 print(X_tr_ts, X_te_ts)
 print(X_tr_ts.shape, X_te_ts.shape)
 
-X_train_ts = X_tr_ts.sort_index().iloc[:, :]
-y_train_ts = X_tr_ts[['NOx', 'SOx']].values
-X_test_ts = X_te_ts.sort_index().iloc[:, :]
-y_test_ts = X_te_ts[['NOx', 'SOx']].values
+X_all_ts = X_all.sort_index().values.reshape(-1,1)
+X_train_ts = X_tr_ts.sort_index()
+y_train_ts = np.log(X_tr_ts[['SOx']].values)
+X_test_ts = X_te_ts.sort_index()
+y_test_ts = np.log(X_te_ts[['SOx']].values)
 
 print('\nCheck the size of datasets_rnd:',
       '\nX_train_ts: ', X_train_ts.shape,
@@ -104,7 +108,7 @@ print('corr:\n', corr)
 print(data_rnd.index.dtype)
 dt2float(data_rnd)
 X = data_rnd.index.values.reshape(-1,1)
-y = data_rnd[['NOx', 'SOx']].values
+y = data_rnd[['SOx']].values
 print('\nSplit the datasets randomly')
 X_train_rnd, X_test_rnd, y_train_rnd, y_test_rnd = train_test_split(X, y, test_size=0.2, random_state=0)
 print('\nCheck the size of datasets_rnd:',
@@ -127,17 +131,17 @@ font_name = fm.FontProperties(fname=path, size=18).get_name()
 sns1 = plt
 plt.rc('font', family=font_name)
 plt.style.use('default')
-sns1.figure(figsize=(20,10))
-sns1.plot(data_fix.index, data_fix.NOx, color='r', linewidth=0.75)
-sns1.plot(data_fix.index, data_fix.SOx, color='g', linewidth=0.75)
-sns1.plot(data_fix.index, data_fix.DUST, color='b', linewidth=0.75)
-sns1.plot(data_fix.index, data_fix.HCl, color='y', linewidth=0.75)
-sns1.plot(data_fix.index, data_fix.CO, color='m', linewidth=0.75)
-plt.legend(['NOx', 'SOx', 'DUST', 'HCl', 'CO'], fontsize=18, loc='best')
-plt.xlabel('Date', fontsize=18)
-plt.ylabel('TMS data', fontsize=18)
-plt.xticks(fontsize=18)
-plt.yticks(fontsize=18)
+# sns1.figure(figsize=(20,10))
+# sns1.plot(data_fix.index, data_fix.NOx, color='r', linewidth=0.75)
+# sns1.plot(data_fix.index, data_fix.SOx, color='g', linewidth=0.75)
+# sns1.plot(data_fix.index, data_fix.DUST, color='b', linewidth=0.75)
+# sns1.plot(data_fix.index, data_fix.HCl, color='y', linewidth=0.75)
+# sns1.plot(data_fix.index, data_fix.CO, color='m', linewidth=0.75)
+# plt.legend(['NOx', 'SOx', 'DUST', 'HCl', 'CO'], fontsize=18, loc='best')
+# plt.xlabel('Date', fontsize=18)
+# plt.ylabel('TMS data', fontsize=18)
+# plt.xticks(fontsize=18)
+# plt.yticks(fontsize=18)
 
 # 3. Build the several machine learning models
 # Build LR model (Time-Series)
@@ -145,28 +149,53 @@ print("\n*** Build LinearRegression model ***")
 print(f'Checked sklearn version: {sklearn.__version__}')
 LRTS = LinearRegression()
 LRTS.fit(X_train_ts, y_train_ts)
-print('LRTS.coef_: {}'.format(LRTS.coef_))
-print('LRTS.intercept_: {}'.format(LRTS.intercept_))
+print('LRTS.coef_[0][0]: {:.3f}'.format(LRTS.coef_[0][0]))
+#print('LRTS.coef_[1][1]: {:.3f}'.format(LRTS.coef_[1][1]))
+print('LRTS.intercept_: {s[0]:.3f}'.format(s=LRTS.intercept_))
 print('Score of train datasets: {:.3f}'.format(LRTS.score(X_train_ts, y_train_ts)))
 print('Score of test datasets: {:.3f}'.format(LRTS.score(X_test_ts, y_test_ts)))
 LRTS_pred = LRTS.predict(X_test_ts)
 print('LRTS_pred: \n', LRTS_pred)
+
+plt.scatter(X_test_ts, y_test_ts, color='black', alpha=0.5)
+plt.plot(X_test_ts, LRTS_pred, color='blue', linewidth=3)
+plt.yticks(fontsize=16)
+plt.xticks(fontsize=16)
+plt.ylabel('SOx', fontsize=16)
+plt.xlabel('Date', fontsize=16)
+plt.show()
 
 # Build LR model (Random)
 print("\n*** Build LinearRegression model ***")
 print(f'Checked sklearn version: {sklearn.__version__}')
 LRRND = LinearRegression()
 LRRND.fit(X_train_rnd, y_train_rnd)
-print('LRTS.coef_: {}'.format(LRRND.coef_))
-print('LRTS.intercept_: {}'.format(LRRND.intercept_))
+print('LRRND.coef_[0][0]: {:.3f}'.format(LRRND.coef_[0][0]))
+# print('LRRND.coef_[1][0]: {:.3f}'.format(LRRND.coef_[1][0]))
+print('LRRND.intercept_: {s[0]:.3f}'.format(s=LRRND.intercept_))
 print('Score of train datasets: {:.3f}'.format(LRRND.score(X_train_rnd, y_train_rnd)))
 print('Score of test datasets: {:.3f}'.format(LRRND.score(X_test_rnd, y_test_rnd)))
 LRRND_pred = LRRND.predict(X_test_rnd)
 print('LRRND_pred: \n', LRRND_pred)
 
-# 기울기 a: [[-0.00225756  0.02130299 -0.05156007 -0.00456313]]
-# y절편 b: [0.27532916]
-# 결정 계수 r 0.004672870461478795
+plt.scatter(X_test_rnd, y_test_rnd, color='black')
+plt.plot(X_test_rnd, LRRND_pred, color='blue', linewidth=3)
+plt.yticks(fontsize=16)
+plt.xticks(fontsize=16)
+plt.ylabel('SOx', fontsize=16)
+plt.xlabel('Date', fontsize=16)
+plt.show()
+
+# Build Tree model
+print("\n*** Build DecisionTreeRegressor model ***")
+print(f'Checked sklearn version: {sklearn.__version__}')
+# DTR = DecisionTreeRegressor()
+# X_train_ts_np = X_train_ts.index.to_numpy()[:,np.newaxis]
+# X_test_ts_np = X_test_ts.index.to_numpy()[:,np.newaxis]
+# y_train_ts_np, y_test_ts_np = np.log(y_train_ts), np.log(y_test_ts)
+# DTR.fit(X_train_ts, y_train_ts)
+
+# DTR_pred = DTR.predict(X_train_ts)
 
 # Build RF model
 print("\n*** Build RandomForestRegressor model ***")
@@ -192,33 +221,57 @@ plt.ylabel('Features', fontsize=16)
 plt.yticks(fontsize=16)
 plt.show()
 
-print('oob_prediction_:\n', RFR.oob_prediction_)
-print('oob_score_:\n', RFR.oob_score_)
-print('Train accuracy: ', RFR.score(X_train_ts, y_train_ts))
-print('Test accuracy: ', RFR.score(X_train_ts, X_test_ts))
+RFR_X_pred = RFR.predict(X_train_ts)
+RFR_y_pred = RFR.predict(X_test_ts)
+print('MSE: {:.3f}'.format(mean_squared_error(y_train_ts, RFR.oob_prediction_)))
+print('RMSE: {:.3f}'.format(np.sqrt(mean_squared_error(y_train_ts, RFR.oob_prediction_))))
+print('R Square: {:.3f}'.format(r2_score(y_train_ts, RFR_X_pred)))
+print('oob_score_: {:.3f}'.format(RFR.oob_score_))
+print('Train accuracy: {:.3f}'.format(RFR.score(X_train_ts, y_train_ts)))
+print('Test accuracy: {:.3f}'.format(RFR.score(X_test_ts, y_test_ts)))
 
-RFR_pred = RFR.predict(X_test_ts)
-mesure_LR = np.exp(LRRND_pred)
-mesure_RFR = np.exp(RFR_pred)
+mesure_LRTS = np.exp(LRTS_pred)
+mesure_LRRND = np.exp(LRRND_pred)
+mesure_RFR = np.exp(RFR_X_pred)
+li1 = []
+li2 = []
 
-plt.yticks(fontname='Arial')
-plt.semilogy(X_te_ts.index, X_te_ts.NOx, label='Train data')
+def extract_values_first_list(mesure):
+    for i in range(len(mesure)):
+        li1.append(mesure[i][0])
+    return li1
+
+def extract_values_second_list(mesure):
+    for i in range(len(mesure)):
+        li2.append(mesure[i][1])
+    return li2
+
+extract_values_first_list(mesure_LRTS)
+extract_values_second_list(mesure_LRTS)
+print(mesure_LRTS)
+print(li1)
+print(li2)
+
+
+plt.xticks(fontsize=16)
+plt.yticks(fontsize=16)
+plt.semilogy(X_tr_ts.index, X_tr_ts.NOx, label='Train data')
 plt.semilogy(X_te_ts.index, X_te_ts.NOx, label='Test data')
-plt.semilogy(X_te_ts.index, RFR_pred, label='Prediction of RFR')
-plt.semilogy(X_te_ts.index, LRRND_pred, label='Prediction of LR')
-plt.legend()
+plt.semilogy(X_te_ts.index, li1, label='Time-series prediction of LR')
+plt.legend(loc=1)
+plt.xlabel('Date', fontsize=16)
+plt.ylabel('NOx', fontsize=16)
+plt.show()
 
-# NOX: 0.31325047
-# SOX: 0.28792656
-# DUST: 0.23093526
-# HCl: 0.16788771
-
-# NOX: 0.45066362
-# SOX: 0.33460961
-# DUST: 0.21472677
-
-# NOX: 0.69537026
-# SOX: 0.30462974
+plt.xticks(fontsize=16)
+plt.yticks(fontsize=16)
+plt.semilogy(X_tr_ts.index, X_tr_ts.SOx, label='Train data')
+plt.semilogy(X_te_ts.index, X_te_ts.SOx, label='Test data')
+plt.semilogy(X_te_ts.index, li2, label='Time-series prediction of LR')
+plt.legend(loc=1)
+plt.xlabel('Date', fontsize=16)
+plt.ylabel('SOx', fontsize=16)
+plt.show()
 
 # Build SVR model
 # print("\n*** Build SupportVectorRegressor model ***")
@@ -246,8 +299,12 @@ plt.legend()
 # plt.show()
 
 # Build ANN model
-ANN = MLPRegressor(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5,2), random_state=1)
-ANN.fit(X_train_ts, y_train_ts)
-# ANN_pred = ANN.predict(X_test)
-# print('ANN_pred: ', ANN_pred)
+print("\n*** Build ANN MLPRegressor model ***")
+print(f'Checked sklearn version: {sklearn.__version__}')
+ANN = MLPRegressor(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(6,2), random_state=1)
+ANN.fit(X_train_rnd, y_train_rnd)
+ANN_pred = ANN.predict(X_test_rnd)
+print('ANN_pred: ', ANN_pred)
 print('ANN.coefs_: ', ANN.coefs_)
+print('Train accuracy of ANN: {:.3f}'.format(ANN.score(X_train_rnd, y_train_rnd)))
+print('Test accuracy of ANN: {:.3f}'.format(ANN.score(X_test_rnd, y_test_rnd)))
