@@ -87,9 +87,9 @@ print(X_tr_ts, X_te_ts)
 print(X_tr_ts.shape, X_te_ts.shape)
 
 X_train_ts = X_tr_ts.sort_index().iloc[:, :]
-y_train_ts = X_tr_ts[['NOx', 'SOx']]
+y_train_ts = X_tr_ts[['NOx', 'SOx']].values
 X_test_ts = X_te_ts.sort_index().iloc[:, :]
-y_test_ts = X_te_ts[['NOx', 'SOx']]
+y_test_ts = X_te_ts[['NOx', 'SOx']].values
 
 print('\nCheck the size of datasets_rnd:',
       '\nX_train_ts: ', X_train_ts.shape,
@@ -148,9 +148,9 @@ LRTS.fit(X_train_ts, y_train_ts)
 print('LRTS.coef_: {}'.format(LRTS.coef_))
 print('LRTS.intercept_: {}'.format(LRTS.intercept_))
 print('Score of train datasets: {:.3f}'.format(LRTS.score(X_train_ts, y_train_ts)))
-# print('Score of test datasets: {:.3f}'.format(LRTS.score(X_test_ts, y_test_ts)))
-# LRTS_pred = LRTS.predict(X_test_ts)
-# print('LRTS_pred: \n', LRTS_pred)
+print('Score of test datasets: {:.3f}'.format(LRTS.score(X_test_ts, y_test_ts)))
+LRTS_pred = LRTS.predict(X_test_ts)
+print('LRTS_pred: \n', LRTS_pred)
 
 # Build LR model (Random)
 print("\n*** Build LinearRegression model ***")
@@ -159,7 +159,8 @@ LRRND = LinearRegression()
 LRRND.fit(X_train_rnd, y_train_rnd)
 print('LRTS.coef_: {}'.format(LRRND.coef_))
 print('LRTS.intercept_: {}'.format(LRRND.intercept_))
-print('결정 계수 r2: {:.3f}'.format(LRRND.score(X_train_rnd, y_train_rnd)))
+print('Score of train datasets: {:.3f}'.format(LRRND.score(X_train_rnd, y_train_rnd)))
+print('Score of test datasets: {:.3f}'.format(LRRND.score(X_test_rnd, y_test_rnd)))
 LRRND_pred = LRRND.predict(X_test_rnd)
 print('LRRND_pred: \n', LRRND_pred)
 
