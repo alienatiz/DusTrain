@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 
-input_path = r'C:/Users/KBC/PycharmProjects/chemical/pre_data/'
-datasets_path = r'C:/Users/KBC/PycharmProjects/chemical/datasets/'
+input_path = r'D:/tms/pre_data/'
+datasets_path = r'D:/tms/datasets/'
 
 # 1. Read data from csv
 pre_data = pd.read_csv(input_path + 'data_nov_1week.csv')

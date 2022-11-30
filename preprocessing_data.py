@@ -5,8 +5,8 @@ import pandas as pd
 import numpy as np
 
 # 1. Set the path for other .csv files
-other_data_path = r'C:/Users/KBC/PycharmProjects/chemical/other_data/'
-orig_data_path = r'C:/Users/KBC/PycharmProjects/chemical/outputs/'
+other_data_path = r'D:/tms/other_data/'
+orig_data_path = r'D:/tms/outputs/'
 repl_list, repl_list_1 = [], []
 
 # 2. Pre-Processing

@@ -2,8 +2,8 @@ import os
 import glob
 
 # input_path = r'C:/Users/KBC/PycharmProjects/chemical/chemical/'
-input_path = r'C:/Users/KBC/PycharmProjects/AutoCrawler/tms_nov_1week/'
-output_path = r'C:/Users/KBC/PycharmProjects/chemical/outputs/tms_nov_1w.csv'
+input_path = r'D:/tms/tms_nov_1week/'
+output_path = r'D:/tms/outputs/tms_nov_1w.csv'
 
 file_list = glob.glob(input_path + '*.csv')
 print(file_list)
