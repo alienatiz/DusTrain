@@ -66,14 +66,14 @@ data_1 = data_1.reindex(
      'tsp_exhst_perm_stdr_value', 'tsp_mesure_value', 'hf_exhst_perm_stdr_value', 'hf_mesure_value',
      'hcl_exhst_perm_stdr_value', 'hcl_mesure_value', 'co_exhst_perm_stdr_value', 'co_mesure_value'], axis=1)
 
-data_lab.rename(columns={'측정시간': 'mesure_dt' ,'지역명': 'area_nm' ,'사업장명': 'fact_manage_nm' ,'배출구': 'stack_code',
+data_lab.rename(columns={'측정시간': 'mesure_dt', '지역명': 'area_nm', '사업장명': 'fact_manage_nm', '배출구': 'stack_code',
                          '암모니아_허용기준': 'nh3_exhst_perm_stdr_value', '암모니아_측정값': 'nh3_mesure_value',
-                         '질소산화물_허용기준': 'nox_exhst_perm_stdr_value','질소산화물_측정값': 'nox_mesure_value',
-                         '황산화물_허용기준': 'sox_exhst_perm_stdr_value','황산화물_측정값': 'sox_mesure_value',
-                         '먼지_허용기준': 'tsp_exhst_perm_stdr_value','먼지_측정값': 'tsp_mesure_value',
-                         '불화수소_허용기준': 'hf_exhst_perm_stdr_value','불화수소_측정값': 'hf_mesure_value',
-                         '염화수소_허용기준': 'hcl_exhst_perm_stdr_value','염화수소_측정값': 'hcl_mesure_value',
-                         '일산화탄소_허용기준': 'co_exhst_perm_stdr_value','일산화탄소_측정값': 'co_mesure_value'}, inplace=True)
+                         '질소산화물_허용기준': 'nox_exhst_perm_stdr_value', '질소산화물_측정값': 'nox_mesure_value',
+                         '황산화물_허용기준': 'sox_exhst_perm_stdr_value', '황산화물_측정값': 'sox_mesure_value',
+                         '먼지_허용기준': 'tsp_exhst_perm_stdr_value', '먼지_측정값': 'tsp_mesure_value',
+                         '불화수소_허용기준': 'hf_exhst_perm_stdr_value', '불화수소_측정값': 'hf_mesure_value',
+                         '염화수소_허용기준': 'hcl_exhst_perm_stdr_value', '염화수소_측정값': 'hcl_mesure_value',
+                         '일산화탄소_허용기준': 'co_exhst_perm_stdr_value', '일산화탄소_측정값': 'co_mesure_value'}, inplace=True)
 
 data_lab = data_lab.reindex(
     ['mesure_dt', 'area_nm', 'fact_manage_nm', 'stack_code', 'nh3_exhst_perm_stdr_value', 'nh3_mesure_value',
@@ -81,14 +81,14 @@ data_lab = data_lab.reindex(
      'tsp_exhst_perm_stdr_value', 'tsp_mesure_value', 'hf_exhst_perm_stdr_value', 'hf_mesure_value',
      'hcl_exhst_perm_stdr_value', 'hcl_mesure_value', 'co_exhst_perm_stdr_value', 'co_mesure_value'], axis=1)
 
-data_oct.rename(columns={'측정시간': 'mesure_dt' ,'지역명': 'area_nm' ,'사업장명': 'fact_manage_nm' ,'배출구': 'stack_code',
+data_oct.rename(columns={'측정시간': 'mesure_dt', '지역명': 'area_nm', '사업장명': 'fact_manage_nm', '배출구': 'stack_code',
                          '암모니아_허용기준': 'nh3_exhst_perm_stdr_value', '암모니아_측정값': 'nh3_mesure_value',
-                         '질소산화물_허용기준': 'nox_exhst_perm_stdr_value','질소산화물_측정값': 'nox_mesure_value',
-                         '황산화물_허용기준': 'sox_exhst_perm_stdr_value','황산화물_측정값': 'sox_mesure_value',
-                         '먼지_허용기준': 'tsp_exhst_perm_stdr_value','먼지_측정값': 'tsp_mesure_value',
-                         '불화수소_허용기준': 'hf_exhst_perm_stdr_value','불화수소_측정값': 'hf_mesure_value',
-                         '염화수소_허용기준': 'hcl_exhst_perm_stdr_value','염화수소_측정값': 'hcl_mesure_value',
-                         '일산화탄소_허용기준': 'co_exhst_perm_stdr_value','일산화탄소_측정값': 'co_mesure_value'}, inplace=True)
+                         '질소산화물_허용기준': 'nox_exhst_perm_stdr_value', '질소산화물_측정값': 'nox_mesure_value',
+                         '황산화물_허용기준': 'sox_exhst_perm_stdr_value', '황산화물_측정값': 'sox_mesure_value',
+                         '먼지_허용기준': 'tsp_exhst_perm_stdr_value', '먼지_측정값': 'tsp_mesure_value',
+                         '불화수소_허용기준': 'hf_exhst_perm_stdr_value', '불화수소_측정값': 'hf_mesure_value',
+                         '염화수소_허용기준': 'hcl_exhst_perm_stdr_value', '염화수소_측정값': 'hcl_mesure_value',
+                         '일산화탄소_허용기준': 'co_exhst_perm_stdr_value', '일산화탄소_측정값': 'co_mesure_value'}, inplace=True)
 
 data_oct = data_oct.reindex(
     ['mesure_dt', 'area_nm', 'fact_manage_nm', 'stack_code', 'nh3_exhst_perm_stdr_value', 'nh3_mesure_value',
@@ -96,14 +96,14 @@ data_oct = data_oct.reindex(
      'tsp_exhst_perm_stdr_value', 'tsp_mesure_value', 'hf_exhst_perm_stdr_value', 'hf_mesure_value',
      'hcl_exhst_perm_stdr_value', 'hcl_mesure_value', 'co_exhst_perm_stdr_value', 'co_mesure_value'], axis=1)
 
-data_nov_1w.rename(columns={'측정시간': 'mesure_dt' ,'지역명': 'area_nm' ,'사업장명': 'fact_manage_nm' ,'배출구': 'stack_code',
-                         '암모니아_허용기준': 'nh3_exhst_perm_stdr_value', '암모니아_측정값': 'nh3_mesure_value',
-                         '질소산화물_허용기준': 'nox_exhst_perm_stdr_value','질소산화물_측정값': 'nox_mesure_value',
-                         '황산화물_허용기준': 'sox_exhst_perm_stdr_value','황산화물_측정값': 'sox_mesure_value',
-                         '먼지_허용기준': 'tsp_exhst_perm_stdr_value','먼지_측정값': 'tsp_mesure_value',
-                         '불화수소_허용기준': 'hf_exhst_perm_stdr_value','불화수소_측정값': 'hf_mesure_value',
-                         '염화수소_허용기준': 'hcl_exhst_perm_stdr_value','염화수소_측정값': 'hcl_mesure_value',
-                         '일산화탄소_허용기준': 'co_exhst_perm_stdr_value','일산화탄소_측정값': 'co_mesure_value'}, inplace=True)
+data_nov_1w.rename(columns={'측정시간': 'mesure_dt', '지역명': 'area_nm', '사업장명': 'fact_manage_nm', '배출구': 'stack_code',
+                            '암모니아_허용기준': 'nh3_exhst_perm_stdr_value', '암모니아_측정값': 'nh3_mesure_value',
+                            '질소산화물_허용기준': 'nox_exhst_perm_stdr_value', '질소산화물_측정값': 'nox_mesure_value',
+                            '황산화물_허용기준': 'sox_exhst_perm_stdr_value', '황산화물_측정값': 'sox_mesure_value',
+                            '먼지_허용기준': 'tsp_exhst_perm_stdr_value', '먼지_측정값': 'tsp_mesure_value',
+                            '불화수소_허용기준': 'hf_exhst_perm_stdr_value', '불화수소_측정값': 'hf_mesure_value',
+                            '염화수소_허용기준': 'hcl_exhst_perm_stdr_value', '염화수소_측정값': 'hcl_mesure_value',
+                            '일산화탄소_허용기준': 'co_exhst_perm_stdr_value', '일산화탄소_측정값': 'co_mesure_value'}, inplace=True)
 
 data_nov_1w = data_nov_1w.reindex(
     ['mesure_dt', 'area_nm', 'fact_manage_nm', 'stack_code', 'nh3_exhst_perm_stdr_value', 'nh3_mesure_value',

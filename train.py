@@ -64,6 +64,7 @@ def dt2float(df):
     df['mesure_dt'].values.astype('float')
     return df
 
+
 data_raw = transform_datetype(data_raw)
 data_fix = transform_datetype(data_fix)
 dt2float(data_rnd)
@@ -89,7 +90,7 @@ print(X_te_ts)
 print(X_tr_ts, X_te_ts)
 print(X_tr_ts.shape, X_te_ts.shape)
 
-X_all_ts = X_all.sort_index().values.reshape(-1,1)
+X_all_ts = X_all.sort_index().values.reshape(-1, 1)
 X_train_ts = X_tr_ts.sort_index()
 y_train_ts = np.log(X_tr_ts[['SOx']].values)
 X_test_ts = X_te_ts.sort_index()
@@ -107,7 +108,7 @@ print('corr:\n', corr)
 
 print(data_rnd.index.dtype)
 dt2float(data_rnd)
-X = data_rnd.index.values.reshape(-1,1)
+X = data_rnd.index.values.reshape(-1, 1)
 y = data_rnd[['SOx']].values
 print('\nSplit the datasets randomly')
 X_train_rnd, X_test_rnd, y_train_rnd, y_test_rnd = train_test_split(X, y, test_size=0.2, random_state=0)
@@ -118,7 +119,6 @@ print('\nCheck the size of datasets_rnd:',
       '\ny_test_rnd: ', y_test_rnd.shape)
 y_train_rnd.reshape(-1, 1)
 y_test_rnd.reshape(-1, 1)
-
 
 # 2-3. Visualizing the datasets
 sns.set_style("ticks")
@@ -150,7 +150,7 @@ print(f'Checked sklearn version: {sklearn.__version__}')
 LRTS = LinearRegression()
 LRTS.fit(X_train_ts, y_train_ts)
 print('LRTS.coef_[0][0]: {:.3f}'.format(LRTS.coef_[0][0]))
-#print('LRTS.coef_[1][1]: {:.3f}'.format(LRTS.coef_[1][1]))
+# print('LRTS.coef_[1][1]: {:.3f}'.format(LRTS.coef_[1][1]))
 print('LRTS.intercept_: {s[0]:.3f}'.format(s=LRTS.intercept_))
 print('Score of train datasets: {:.3f}'.format(LRTS.score(X_train_ts, y_train_ts)))
 print('Score of test datasets: {:.3f}'.format(LRTS.score(X_test_ts, y_test_ts)))
@@ -212,7 +212,7 @@ importances.sort_values('importances', ascending=False, inplace=True)
 importances.reset_index(drop=True, inplace=True)
 print(importances)
 
-plt.figure(figsize=(10,8))
+plt.figure(figsize=(10, 8))
 sns.barplot(x='importances', y='feature', data=importances)
 plt.title('Feature importance of the input variables on Random Forest', fontsize=16)
 plt.xlabel('Importances', fontsize=16)
@@ -236,22 +236,24 @@ mesure_RFR = np.exp(RFR_X_pred)
 li1 = []
 li2 = []
 
+
 def extract_values_first_list(mesure):
     for i in range(len(mesure)):
         li1.append(mesure[i][0])
     return li1
+
 
 def extract_values_second_list(mesure):
     for i in range(len(mesure)):
         li2.append(mesure[i][1])
     return li2
 
+
 extract_values_first_list(mesure_LRTS)
 extract_values_second_list(mesure_LRTS)
 print(mesure_LRTS)
 print(li1)
 print(li2)
-
 
 plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
@@ -301,7 +303,7 @@ plt.show()
 # Build ANN model
 print("\n*** Build ANN MLPRegressor model ***")
 print(f'Checked sklearn version: {sklearn.__version__}')
-ANN = MLPRegressor(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(6,2), random_state=1)
+ANN = MLPRegressor(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(6, 2), random_state=1)
 ANN.fit(X_train_rnd, y_train_rnd)
 ANN_pred = ANN.predict(X_test_rnd)
 print('ANN_pred: ', ANN_pred)
