@@ -9,30 +9,34 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import platform
 import seaborn as sns
+import sys
 
 
 # Set the environment for unicode
 current_system = platform.platform()
-date = dt.datetime.today().strftime("%Y%m%d%H%M%S")
+date = dt.datetime.today().strftime("%m%d%H%M")
 print(date)
 filename = './log/log_' + str(date) + '.log'
+log_name = './log/log_monthly_' + date + '.txt'
+
+sys.stdout = open(log_name, mode='w')
+
+# logger = logging.getLogger('wqi')
+# logger.setLevel(logging.DEBUG)
+# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# stream_handler = logging.StreamHandler()
+# stream_handler.setFormatter(formatter)
+# logger.addHandler(stream_handler)
+
+# file_handler = logging.FileHandler(filename)
+# file_handler.setFormatter(formatter)
+# logger.addHandler(file_handler)
 
 if current_system == 'Darwin':
     plt.rcParams['font.family'] ='AppleGothic'
 elif current_system == 'Windows':
     plt.rcParams['font.family'] = 'Malgun Gothic'
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(formatter)
-    logger.addHandler(stream_handler)
-
-    file_handler = logging.FileHandler(filename)
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-    
 else:
     pass
 
@@ -47,24 +51,24 @@ for i in range(len(month)):
     real_df = raw_data.loc[:, ['pH', 'COD(mg/L)', 'SS(mg/L)', 'DO(mg/L)', 'TP(mg/L)', 'TN(mg/L)', 'K-CWQI']]
     simple_df = raw_data.loc[:, ['pH', 'COD(mg/L)', 'SS(mg/L)', 'DO(mg/L)', 'TP(mg/L)', 'TN(mg/L)', 'reclass_KCWQI']]
 
-    print("real:\n", real_df)
-    print("simple:\n", simple_df)
+    # print("real:\n", real_df)
+    # print("simple:\n", simple_df)
 
     # Check the correlations with method as 'pearson'
     corr = real_df.corr(method='pearson')
     print(corr)
     plt.figure(figsize=(16, 14))
     plt.title('Correlations (' + month[i] + ')', fontsize=35)
-    sns.heatmap(corr, vmin=-1.0, vmax=1.0, square=True, annot=True, cmap='Blues', linewidths=.5, annot_kws={'size':20}, fmt='.2f')
+    sns.heatmap(corr, vmin=-1.0, vmax=1.0, square=True, annot=True, cmap='Blues', linewidths=.5, annot_kws={'size':25}, fmt='.2f')
     fig1_name = './fig1_' + month[i] + '.png'
-    plt.savefig(fig1_name)
+    # plt.savefig(fig1_name)
 
-    print(real_df)
+    # print(real_df)
 
     X = real_df.loc[:, ['pH', 'COD(mg/L)', 'SS(mg/L)', 'DO(mg/L)', 'TP(mg/L)', 'TN(mg/L)']]
     y = real_df.loc[:, ['K-CWQI']]
-    print(X)
-    print(y)
+    # print(X)
+    # print(y)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
@@ -90,7 +94,7 @@ for i in range(len(month)):
     scores_df = pd.DataFrame(rfc_grid.cv_results_)
     scores_df[['params', 'mean_test_score', 'rank_test_score', \
             'split0_test_score', 'split1_test_score', 'split2_test_score']]
-    grid_search_result = './result/Monthly/grid_search_result_230612_' + month[i] + '.csv'
+    grid_search_result = './result/Monthly/grid_search_result_230613_' + month[i] + '.csv'
     print(grid_search_result)
     scores_df.to_csv(grid_search_result, index=False, encoding='utf-8')
 
@@ -100,24 +104,22 @@ for i in range(len(month)):
     importances['importances'] = importance
     importances.sort_values('importances', ascending=False, inplace=True)
     importances.reset_index(drop=True, inplace=True)
-    print(importances)
+    # print(importances)
 
     plt.figure(figsize=(16, 10))
-    sns.barplot(x='importances', y='feature', data=importances)
-    plt.title('Feature importance of the input variables on Random Forest (' + month[i] + ')', fontsize=35)
-    plt.xlabel('Importances', fontsize=16)
-    plt.xticks(fontsize=16)
-    plt.ylabel('Features', fontsize=16)
-    plt.yticks(fontsize=16)
-    importances_fig = './result/Monthly/rf_importances_230612_' + month[i] + '.png'
+    sns.barplot(x='feature', y='importances', data=importances)
+    plt.title('Feature importance of Random Forest Regression (' + month[i] + ')', fontsize=35)
+    plt.xlabel('Features', fontsize=20)
+    plt.xticks(fontsize=18)
+    plt.ylabel('Importances', fontsize=20)
+    plt.yticks(fontsize=18)
+    plt.ylim((0.0, 1.0))
+    importances_fig = './result/Monthly/rf_importances_230613_' + month[i] + '.png'
     print(importances_fig)
     plt.savefig(importances_fig)
 
-    print(y_test)
-    print(best_rfc_predict.reshape(-1))
-
-    def mape_value(y, y_pred):
-        return np.mean(np.abs((y - y_pred) / y)) * 100
+    # print(y_test)
+    # print(best_rfc_predict.reshape(-1))
 
     list_01 = []
     y_test_ = y_test.values.tolist()
@@ -132,13 +134,13 @@ for i in range(len(month)):
         list_02.append(y_pred_[j])
         
     temp = pd.DataFrame({'Test data': list_01, 'Prediction': list_02})
-    prediction_csv = './result/Monthly/rf_regression_predict_230612_' + month[i] + '.csv'
+    prediction_csv = './result/Monthly/rf_regression_predict_230613_' + month[i] + '.csv'
     print('Saving csv ...' + prediction_csv)
     temp.to_csv(prediction_csv, index=False, encoding='utf-8 sig')
 
     score_list = cross_val_score(best_rfc, X_train, y_train, cv=5, scoring='r2')
     mae = mean_absolute_error(y_test.values.ravel(), best_rfc_predict)
-    mape = np.mean(np.abs((y_test.values.ravel() - best_rfc_predict) / y_test.values.ravel()))
+    mape = np.mean(np.abs((y_test.values.ravel() - best_rfc_predict) / y_test.values.ravel())) * 100
     mse = mean_squared_error(y_test.values.ravel(), best_rfc_predict)
     rmse = np.sqrt(mse)
     score = best_rfc.score(X_test, y_test)
@@ -174,17 +176,16 @@ for i in range(len(month)):
 
     texting = str(label[0]) + '\n' + str(label[1]) + '\n' + str(label[2]) + '\n' + str(label[3]) + '\n' + str(label[4])
 
-    plt.figure(figsize=(8, 12))
+    plt.figure(figsize=(9, 10))
     ax = sns.regplot(x=best_rfc_predict, y=y_test, data=real_df, scatter_kws={"s":50, "alpha":0.5, "color":"blue"}, ci=None,  line_kws={"lw":3, "ls":"-","alpha":1, "color":"red"})
-    ax.text(0.15, 0.8, texting, transform=ax.transAxes)
+    ax.text(.05, .75, texting, transform=ax.transAxes)
     # plt.legend(labels=label, loc='best', fontsize='x-large',fancybox=True, framealpha=0.7)
     plt.xlim((30, 100))
     plt.ylim((30, 100))
-    rf_result = './result/Monthly/rf_results_230612_' + month[i] + '.png'
+    plt.title('Result (' + month[i] + ')', fontsize=30)
+    rf_result = './result/Monthly/rf_results_230613_' + month[i] + '.png'
     print(rf_result)
     plt.savefig(rf_result)
 
-# plt.xlabel('Real data')
-# plt.ylabel('RF Prediction')
-# plt.legend(mse, rmse, mape, mpe, r2)
-# plt.savefig("./RF_prediction_.png")
+
+sys.stdout.close()
